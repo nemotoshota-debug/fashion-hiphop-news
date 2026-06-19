@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { type RssItem } from "@/app/lib/rss-parser";
 import { NewsCard } from "./NewsCard";
 
-const AUTO_REFRESH_MS = 60 * 60 * 1000; // 1 hour
+const AUTO_REFRESH_MS = 60 * 60 * 1000;
 
 type Props = {
   category: "fashion" | "hiphop";
@@ -12,7 +12,7 @@ type Props = {
 
 function Spinner() {
   return (
-    <div className="flex justify-center py-16">
+    <div className="flex justify-center py-10">
       <div className="w-5 h-5 border border-white/20 border-t-white/60 rounded-full animate-spin" />
     </div>
   );
@@ -50,26 +50,16 @@ export function NewsSection({ category }: Props) {
     return () => clearInterval(timer);
   }, [load]);
 
-  if (loading) return <Spinner />;
-
-  if (error) {
-    return (
-      <div className="text-center py-16">
-        <p className="text-white/20 text-xs tracking-widest mb-4">NETWORK ERROR</p>
-        <button onClick={() => load(true)} className="text-xs text-white/30 hover:text-white/70 transition-colors border border-white/10 rounded-lg px-4 py-2">
-          再試行
-        </button>
-      </div>
-    );
-  }
-
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-white/15 text-xs tracking-widest uppercase">
-          {items.length} Articles
-        </p>
+      {/* Section header */}
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
+          <div className="h-px flex-1 w-8 bg-white/10" />
+          <span className="text-white/20 text-xs tracking-[0.2em] uppercase">Latest News</span>
+          <div className="h-px flex-1 w-8 bg-white/10" />
+        </div>
+        <div className="flex items-center gap-3 ml-4">
           {updatedAt && (
             <span className="text-white/15 text-xs">
               {new Intl.DateTimeFormat("ja-JP", { hour: "2-digit", minute: "2-digit" }).format(new Date(updatedAt))} 更新
@@ -80,23 +70,34 @@ export function NewsSection({ category }: Props) {
             disabled={refreshing}
             className="text-xs text-white/20 hover:text-white/60 transition-colors flex items-center gap-1"
           >
-            <svg
-              width="12" height="12" viewBox="0 0 12 12" fill="none"
-              className={refreshing ? "animate-spin" : ""}
-            >
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none" className={refreshing ? "animate-spin" : ""}>
               <path d="M10 6A4 4 0 1 1 6 2M6 2L8 0M6 2L8 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span>{refreshing ? "更新中..." : "更新"}</span>
           </button>
         </div>
       </div>
 
-      {items.length === 0 ? (
-        <p className="text-white/20 text-sm text-center py-16 tracking-widest">NO NEWS</p>
+      {loading ? (
+        <Spinner />
+      ) : error ? (
+        <div className="text-center py-10">
+          <p className="text-white/20 text-xs tracking-widest mb-3">NETWORK ERROR</p>
+          <button onClick={() => load(true)} className="text-xs text-white/30 hover:text-white/70 transition-colors border border-white/10 rounded-lg px-4 py-2">
+            再試行
+          </button>
+        </div>
+      ) : items.length === 0 ? (
+        <p className="text-white/20 text-sm text-center py-10 tracking-widest">NO NEWS</p>
       ) : (
-        <div className="grid grid-cols-1 gap-3">
-          {items.map((item) => (
-            <NewsCard key={item.link} item={item} />
+        <div className="flex flex-col gap-3">
+          {items.map((item, idx) => (
+            <div
+              key={item.link}
+              className="animate-card-in"
+              style={{ animationDelay: `${idx * 30}ms` }}
+            >
+              <NewsCard item={item} />
+            </div>
           ))}
         </div>
       )}

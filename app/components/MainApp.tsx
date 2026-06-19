@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { fashionBrands, type FashionBrand } from "@/app/data/fashion-brands";
 import { hipHopArtists, type HipHopArtist } from "@/app/data/hiphop";
 import { NewsSection } from "./NewsSection";
 
-type Tab = "fashion" | "hiphop" | "fashion-news" | "hiphop-news";
+type Tab = "fashion" | "hiphop";
 
 const STATUS_COLORS: Record<FashionBrand["status"], string> = {
   Active: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/25",
@@ -27,13 +27,16 @@ const CATEGORY_COLORS: Record<string, string> = {
   ストリートウェア: "bg-white/5 text-white/60 border border-white/10",
 };
 
-function FashionCard({ brand }: { brand: FashionBrand }) {
+function FashionCard({ brand, index }: { brand: FashionBrand; index: number }) {
   const [expanded, setExpanded] = useState(false);
   const catColor = CATEGORY_COLORS[brand.category] ?? "bg-white/5 text-white/60 border border-white/10";
   const statusColor = STATUS_COLORS[brand.status];
 
   return (
-    <article className="relative bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 flex flex-col gap-3 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+    <article
+      className="animate-card-in relative bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 flex flex-col gap-3 shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:bg-white/[0.07] hover:border-white/[0.13] hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-200 cursor-default"
+      style={{ animationDelay: `${index * 40}ms` }}
+    >
       <div className="flex items-start justify-between gap-2">
         <h2 className="text-white/90 font-semibold text-base leading-snug tracking-wide">{brand.name}</h2>
         <span className={`text-xs px-2.5 py-0.5 rounded-full whitespace-nowrap backdrop-blur-sm ${statusColor}`}>
@@ -52,14 +55,14 @@ function FashionCard({ brand }: { brand: FashionBrand }) {
         <span className="text-white/70 text-sm">{brand.creativeDirector}</span>
       </div>
 
-      <p className={`text-white/40 text-sm leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>
+      <p className={`text-white/40 text-sm leading-relaxed transition-all duration-300 ${expanded ? "" : "line-clamp-3"}`}>
         {brand.summary}
       </p>
 
       <div className="flex items-center justify-between pt-1 border-t border-white/[0.06]">
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="text-xs text-white/25 hover:text-white/60 transition-colors"
+          className="text-xs text-white/25 hover:text-white/60 transition-colors active:scale-95"
         >
           {expanded ? "↑ 閉じる" : "↓ 続きを読む"}
         </button>
@@ -67,7 +70,7 @@ function FashionCard({ brand }: { brand: FashionBrand }) {
           href={`https://www.instagram.com/${brand.instagram.replace("@", "")}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-white/25 hover:text-pink-300/80 transition-colors"
+          className="text-xs text-white/25 hover:text-pink-300/80 transition-colors active:scale-95"
         >
           {brand.instagram}
         </a>
@@ -76,11 +79,14 @@ function FashionCard({ brand }: { brand: FashionBrand }) {
   );
 }
 
-function HipHopCard({ artist }: { artist: HipHopArtist }) {
+function HipHopCard({ artist, index }: { artist: HipHopArtist; index: number }) {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <article className="relative bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 flex flex-col gap-3 shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+    <article
+      className="animate-card-in relative bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 flex flex-col gap-3 shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:bg-white/[0.07] hover:border-white/[0.13] hover:-translate-y-0.5 hover:shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-200 cursor-default"
+      style={{ animationDelay: `${index * 40}ms` }}
+    >
       <div className="flex items-start justify-between gap-2">
         <h2 className="text-white/90 font-semibold text-base leading-snug tracking-wide">{artist.name}</h2>
         {artist.isJune2026 && (
@@ -116,24 +122,24 @@ function HipHopCard({ artist }: { artist: HipHopArtist }) {
         </div>
       </div>
 
-      <p className={`text-white/40 text-sm leading-relaxed ${expanded ? "" : "line-clamp-3"}`}>
+      <p className={`text-white/40 text-sm leading-relaxed transition-all duration-300 ${expanded ? "" : "line-clamp-3"}`}>
         {artist.summary}
       </p>
 
       <div className="flex items-center justify-between pt-1 border-t border-white/[0.06]">
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="text-xs text-white/25 hover:text-white/60 transition-colors"
+          className="text-xs text-white/25 hover:text-white/60 transition-colors active:scale-95"
         >
           {expanded ? "↑ 閉じる" : "↓ 続きを読む"}
         </button>
         <div className="flex gap-4">
           <a href={artist.spotify} target="_blank" rel="noopener noreferrer"
-            className="text-xs text-white/25 hover:text-green-300/80 transition-colors">Spotify</a>
+            className="text-xs text-white/25 hover:text-green-300/80 transition-colors active:scale-95">Spotify</a>
           <a href={artist.instagram} target="_blank" rel="noopener noreferrer"
-            className="text-xs text-white/25 hover:text-pink-300/80 transition-colors">IG</a>
+            className="text-xs text-white/25 hover:text-pink-300/80 transition-colors active:scale-95">IG</a>
           <a href={artist.youtube} target="_blank" rel="noopener noreferrer"
-            className="text-xs text-white/25 hover:text-red-300/80 transition-colors">YT</a>
+            className="text-xs text-white/25 hover:text-red-300/80 transition-colors active:scale-95">YT</a>
         </div>
       </div>
     </article>
@@ -143,6 +149,14 @@ function HipHopCard({ artist }: { artist: HipHopArtist }) {
 export default function MainApp() {
   const [tab, setTab] = useState<Tab>("fashion");
   const [search, setSearch] = useState("");
+  const tabKey = useRef(0);
+
+  function switchTab(next: Tab) {
+    if (next === tab) return;
+    tabKey.current += 1;
+    setTab(next);
+    setSearch("");
+  }
 
   const filteredBrands = useMemo(() => {
     const q = search.toLowerCase();
@@ -171,11 +185,9 @@ export default function MainApp() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "radial-gradient(ellipse at 20% 0%, #1a1a2e 0%, #0a0a0f 50%, #000000 100%)" }}>
 
-      {/* Ambient light blobs */}
       <div className="fixed top-0 left-1/4 w-96 h-96 bg-indigo-900/20 rounded-full blur-3xl pointer-events-none" />
       <div className="fixed top-1/3 right-0 w-72 h-72 bg-purple-900/15 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Header */}
       <header className="sticky top-0 z-20 bg-black/30 backdrop-blur-2xl border-b border-white/[0.06] px-4 pt-5 pb-3">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-baseline gap-2.5 mb-3">
@@ -183,22 +195,18 @@ export default function MainApp() {
             <span className="text-white/20 text-xs tracking-widest">2026.06</span>
           </div>
 
-          {/* Search (only for curated tabs) */}
-          {(tab === "fashion" || tab === "hiphop") && (
-            <input
-              type="text"
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white/[0.05] backdrop-blur-sm border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white/80 placeholder-white/20 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] transition-all"
-            />
-          )}
+          <input
+            type="text"
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white/[0.05] backdrop-blur-sm border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white/80 placeholder-white/20 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] transition-all"
+          />
 
-          {/* Tab switcher */}
           <div className="flex mt-3 bg-white/[0.04] backdrop-blur-sm border border-white/[0.06] rounded-xl p-1 gap-1">
             <button
-              onClick={() => setTab("fashion")}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all ${
+              onClick={() => switchTab("fashion")}
+              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all duration-200 active:scale-[0.97] ${
                 tab === "fashion"
                   ? "bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
                   : "text-white/30 hover:text-white/60"
@@ -208,18 +216,8 @@ export default function MainApp() {
               <span className="ml-1.5 opacity-50">{filteredBrands.length}</span>
             </button>
             <button
-              onClick={() => setTab("fashion-news")}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all ${
-                tab === "fashion-news"
-                  ? "bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
-                  : "text-white/30 hover:text-white/60"
-              }`}
-            >
-              F.News
-            </button>
-            <button
-              onClick={() => setTab("hiphop")}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all ${
+              onClick={() => switchTab("hiphop")}
+              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all duration-200 active:scale-[0.97] ${
                 tab === "hiphop"
                   ? "bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
                   : "text-white/30 hover:text-white/60"
@@ -228,73 +226,64 @@ export default function MainApp() {
               Hip-Hop
               <span className="ml-1.5 opacity-50">{filteredArtists.length}</span>
             </button>
-            <button
-              onClick={() => setTab("hiphop-news")}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all ${
-                tab === "hiphop-news"
-                  ? "bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
-                  : "text-white/30 hover:text-white/60"
-              }`}
-            >
-              H.News
-            </button>
           </div>
         </div>
       </header>
 
-      {/* Content */}
       <main className="flex-1 px-4 py-5 max-w-2xl mx-auto w-full">
-        {tab === "fashion" && (
-          <>
-            {search === "" && (
-              <p className="text-white/15 text-xs tracking-widest uppercase mb-4">
-                {fashionBrands.length} Brands
-              </p>
-            )}
-            <div className="flex flex-col gap-3">
-              {filteredBrands.map((brand) => (
-                <FashionCard key={brand.name} brand={brand} />
+        <div key={tabKey.current} className="animate-tab-enter flex flex-col gap-3">
+
+          {tab === "fashion" && (
+            <>
+              {search === "" && (
+                <p className="text-white/15 text-xs tracking-widest uppercase mb-1">
+                  {fashionBrands.length} Brands
+                </p>
+              )}
+              {filteredBrands.map((brand, i) => (
+                <FashionCard key={brand.name} brand={brand} index={i} />
               ))}
               {filteredBrands.length === 0 && (
                 <p className="text-white/20 text-sm text-center py-16 tracking-widest">NO RESULTS</p>
               )}
-            </div>
-          </>
-        )}
 
-        {tab === "fashion-news" && (
-          <NewsSection category="fashion" />
-        )}
+              {search === "" && (
+                <div className="mt-4">
+                  <NewsSection category="fashion" />
+                </div>
+              )}
+            </>
+          )}
 
-        {tab === "hiphop-news" && (
-          <NewsSection category="hiphop" />
-        )}
-
-        {tab === "hiphop" && (
-          <>
-            {search === "" && (
-              <div className="mb-4 bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] rounded-xl px-4 py-3">
-                <p className="text-white/50 text-xs tracking-widest uppercase">
-                  June 2026 — {june2026Count} New Releases
-                </p>
-                <p className="text-white/25 text-xs mt-1">
-                  D12 · YG · Vince Staples · Freddie Gibbs · Blxst · Future
-                </p>
-              </div>
-            )}
-            <div className="flex flex-col gap-3">
-              {filteredArtists.map((artist) => (
-                <HipHopCard key={artist.name} artist={artist} />
+          {tab === "hiphop" && (
+            <>
+              {search === "" && (
+                <div className="bg-white/[0.03] backdrop-blur-sm border border-white/[0.06] rounded-xl px-4 py-3 mb-1">
+                  <p className="text-white/50 text-xs tracking-widest uppercase">
+                    June 2026 — {june2026Count} New Releases
+                  </p>
+                  <p className="text-white/25 text-xs mt-1">
+                    D12 · YG · Vince Staples · Freddie Gibbs · Blxst · Future
+                  </p>
+                </div>
+              )}
+              {filteredArtists.map((artist, i) => (
+                <HipHopCard key={artist.name} artist={artist} index={i} />
               ))}
               {filteredArtists.length === 0 && (
                 <p className="text-white/20 text-sm text-center py-16 tracking-widest">NO RESULTS</p>
               )}
-            </div>
-          </>
-        )}
+
+              {search === "" && (
+                <div className="mt-4">
+                  <NewsSection category="hiphop" />
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </main>
 
-      {/* Footer */}
       <footer className="text-center text-white/10 text-xs py-5 border-t border-white/[0.04] tracking-widest uppercase">
         Hypebeast · WWD · Billboard · Complex
       </footer>

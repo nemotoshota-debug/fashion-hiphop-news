@@ -3,8 +3,9 @@
 import { useState, useMemo } from "react";
 import { fashionBrands, type FashionBrand } from "@/app/data/fashion-brands";
 import { hipHopArtists, type HipHopArtist } from "@/app/data/hiphop";
+import { NewsSection } from "./NewsSection";
 
-type Tab = "fashion" | "hiphop";
+type Tab = "fashion" | "hiphop" | "fashion-news" | "hiphop-news";
 
 const STATUS_COLORS: Record<FashionBrand["status"], string> = {
   Active: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/25",
@@ -182,38 +183,60 @@ export default function MainApp() {
             <span className="text-white/20 text-xs tracking-widest">2026.06</span>
           </div>
 
-          {/* Search */}
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white/[0.05] backdrop-blur-sm border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white/80 placeholder-white/20 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] transition-all"
-          />
+          {/* Search (only for curated tabs) */}
+          {(tab === "fashion" || tab === "hiphop") && (
+            <input
+              type="text"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-white/[0.05] backdrop-blur-sm border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white/80 placeholder-white/20 focus:outline-none focus:border-white/20 focus:bg-white/[0.07] transition-all"
+            />
+          )}
 
           {/* Tab switcher */}
           <div className="flex mt-3 bg-white/[0.04] backdrop-blur-sm border border-white/[0.06] rounded-xl p-1 gap-1">
             <button
               onClick={() => setTab("fashion")}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.15em] uppercase transition-all ${
+              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all ${
                 tab === "fashion"
                   ? "bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
                   : "text-white/30 hover:text-white/60"
               }`}
             >
               Fashion
-              <span className="ml-2 opacity-50">{filteredBrands.length}</span>
+              <span className="ml-1.5 opacity-50">{filteredBrands.length}</span>
+            </button>
+            <button
+              onClick={() => setTab("fashion-news")}
+              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all ${
+                tab === "fashion-news"
+                  ? "bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
+                  : "text-white/30 hover:text-white/60"
+              }`}
+            >
+              F.News
             </button>
             <button
               onClick={() => setTab("hiphop")}
-              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.15em] uppercase transition-all ${
+              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all ${
                 tab === "hiphop"
                   ? "bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
                   : "text-white/30 hover:text-white/60"
               }`}
             >
               Hip-Hop
-              <span className="ml-2 opacity-50">{filteredArtists.length}</span>
+              <span className="ml-1.5 opacity-50">{filteredArtists.length}</span>
+            </button>
+            <button
+              onClick={() => setTab("hiphop-news")}
+              className={`flex-1 py-2 rounded-lg text-xs font-medium tracking-[0.1em] uppercase transition-all ${
+                tab === "hiphop-news"
+                  ? "bg-white/[0.12] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
+                  : "text-white/30 hover:text-white/60"
+              }`}
+            >
+              H.News
             </button>
           </div>
         </div>
@@ -237,6 +260,14 @@ export default function MainApp() {
               )}
             </div>
           </>
+        )}
+
+        {tab === "fashion-news" && (
+          <NewsSection category="fashion" />
+        )}
+
+        {tab === "hiphop-news" && (
+          <NewsSection category="hiphop" />
         )}
 
         {tab === "hiphop" && (
